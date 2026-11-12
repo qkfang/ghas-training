@@ -1,6 +1,6 @@
 const express = require('express');
 const https = require('https');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 
 // Owner: team-platform. Session 2/3 demo content.
 const router = express.Router();
@@ -21,9 +21,13 @@ router.post('/webhooks/test', (req, res) => {
     .on('error', () => res.status(502).end());
 });
 
-// DEMO ALERT (true positive): command injection in a backup helper (?name=x;rm -rf ~).
+// DEMO ALERT (remediated): command injection in a backup helper.
 router.post('/backup', (req, res) => {
-  exec('tar -czf /tmp/' + req.query.name + '.tgz ./data', (err) => {
+  const { name } = req.query;
+  if (typeof name !== 'string' || !/^[a-zA-Z0-9_-]{1,64}$/.test(name)) {
+    return res.status(400).send('invalid backup name');
+  }
+  execFile('tar', ['-czf', `/tmp/${name}.tgz`, './data'], (err) => {
     if (err) return res.status(500).send('backup failed');
     res.status(202).end();
   });
