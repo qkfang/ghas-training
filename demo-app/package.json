@@ -1,0 +1,23 @@
+{
+  "name": "acme-shop-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "INTENTIONALLY VULNERABLE demo app for GHAS alert triage training. Do not deploy.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js --products 25",
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "express": "4.17.1",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.15",
+    "minimist": "1.2.5",
+    "sqlite3": "5.0.0"
+  },
+  "devDependencies": {
+    "minimatch": "3.0.4",
+    "semver": "5.7.1"
+  }
+}

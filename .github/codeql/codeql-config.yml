@@ -1,0 +1,14 @@
+name: demo-app CodeQL config
+
+# security-extended adds lower-precision queries (e.g. hard-coded credentials, missing rate
+# limiting) so the demo has a realistic mix of true positives, false positives and noise.
+queries:
+  - uses: security-extended
+
+paths:
+  - demo-app
+
+# Tuning example: exclude vendored third-party code instead of dismissing its alerts one by one.
+paths-ignore:
+  - demo-app/public/vendor
+  - '**/node_modules'

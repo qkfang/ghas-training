@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /demo-app
+    schedule:
+      interval: weekly
+    # Keep version-update PRs off so the demo focuses on security alerts and security-update PRs.
+    open-pull-requests-limit: 0
+    groups:
+      runtime-security:
+        applies-to: security-updates
+        dependency-type: production
+      dev-security:
+        applies-to: security-updates
+        dependency-type: development

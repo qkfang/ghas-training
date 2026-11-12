@@ -1,0 +1,32 @@
+name: CodeQL (demo-app)
+
+on:
+  push:
+    branches: [main]
+    paths: ['demo-app/**', '.github/codeql/**', '.github/workflows/codeql.yml']
+  pull_request:
+    branches: [main]
+    paths: ['demo-app/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  analyze:
+    name: Analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:javascript-typescript
