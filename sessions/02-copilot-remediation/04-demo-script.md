@@ -10,7 +10,7 @@ Repository: `qkfang/ghas-training` · App: [`demo-app/`](../../demo-app) · Tool
 
 # 2. Find the alert numbers you'll use
 gh api "repos/qkfang/ghas-training/code-scanning/alerts?state=open&per_page=100" `
-  --jq '.[] | select(.rule.id | test("sql-injection|reflected-xss|command-line-injection")) | [.number, .rule.id, .most_recent_instance.location.path] | @tsv'
+  --jq '.[] | select(.rule.id | test("sql-injection|reflected-xss|command-line-injection|code-injection|request-forgery")) | [.number, .rule.id, .most_recent_instance.location.path] | @tsv'
 
 # 3. Fallback: pre-generate an autofix for the SQL injection alert and screenshot it (does not commit anything)
 ./tools/autofix.ps1 -Alert <sqli#>
@@ -23,9 +23,12 @@ gh api "repos/qkfang/ghas-training/code-scanning/alerts?state=open&per_page=100"
 **Browser tabs to pre-open** (zoom 125%):
 1. The `js/sql-injection` alert (`demo-app/src/routes/products.js`)
 2. The `js/command-line-injection` alert (`demo-app/src/routes/admin.js`)
-3. Copilot Chat on github.com (or VS Code with the repo open)
-4. Pull requests list
-5. Terminal in repo root
+3. The `js/code-injection` alert (`demo-app/src/routes/integrations.js`) — backup headline if time allows
+4. Copilot Chat on github.com (or VS Code with the repo open)
+5. Pull requests list
+6. Terminal in repo root
+
+All demo alerts and their intended use are listed in [`demo-app/README.md`](../../demo-app/README.md) (section *Session 2 & 3 demo content*).
 
 **Reset after the session:** close (don't merge) any `autofix/*` PRs and delete their branches so the alerts stay open for the next run:
 
@@ -45,7 +48,7 @@ gh pr list -R qkfang/ghas-training --search "head:autofix/" --json number --jq '
    and what request would an attacker send to dump all products? Is _.escape on the output relevant?
    ```
 3. Point out: Copilot's answer **agrees with the CodeQL path** (ground truth) and adds the exploit (`q=' OR '1'='1`) and the insight that `_.escape` only protects HTML output, not SQL. → **True positive**, proceed to fix.
-4. Follow-up prompt: *"Where else in demo-app is user input concatenated into a query or shell command?"* → it should surface `admin.js` — "fix the class, not the instance".
+4. Follow-up prompt: *"Where else in demo-app is user input concatenated into a query or shell command?"* → it should surface `orders.js`, `reviews.js`, `admin.js` and `integrations.js` — "fix the class, not the instance". Show the code scanning list filtered `is:open rule:js/sql-injection` (4 alerts).
 
 ## Segment 2 — Generate & review Copilot Autofix (2 min)
 
@@ -78,12 +81,13 @@ gh pr list -R qkfang/ghas-training --search "head:autofix/" --json number --jq '
 
 ## Segment 5 — Scale it: assign to Copilot / script it (2 min)
 
-**Option A — agentic autofix (if enabled):** on the command injection alert, **Assign to Copilot**. Show the agent session starting and (if time) the draft PR it opens. Note it honours the custom instructions and validates by re-running CodeQL.
+**Option A — agentic autofix (if enabled):** filter `is:open rule:js/sql-injection`, select the **three** alerts in `orders.js` / `reviews.js`, and **Assign to Copilot** (one session → one draft PR). Show the agent session and (if time) the PR.
+Review point: the **ORDER BY** injection in `orders.js` can't be fixed with a bound parameter — check Copilot used an **allowlist** of sortable columns. It honours the custom instructions and validates by re-running CodeQL.
 *Talk track: "This repo uses `security-extended`; agentic autofix can only confirm fixes for the default code scanning suite — rules like missing-rate-limiting won't be validated."*
 
 **Option B — REST API:**
 ```powershell
-./tools/autofix.ps1 -Alert <cmdi#> -CreatePR
+./tools/autofix.ps1 -Alert <code-injection#> -CreatePR      # eval() in integrations.js — fix must remove eval, not filter it
 ```
 Walk the output: request autofix → poll status → commit to `autofix/alert-<n>` → draft PR. *"Useful for champions batching fixes — every PR still gets reviewed."*
 

@@ -19,13 +19,18 @@ gh workflow run codeql.yml -R "$org/ghas-training"
 '{"repository_names":["ghas-training"],"properties":[{"property_name":"tier","value":"1"}]}' |
   gh api -X PATCH "orgs/$org/properties/values" --input -
 
-# 3. Check scope and a suggested due date
-./tools/campaign.ps1 -Org $org -Plan -Rule js/sql-injection,js/reflected-xss,js/command-line-injection -Property tier=1 -WeeklyCapacity 2
+# 3. Check scope and a suggested due date (Injection theme = 7 alerts: 4 SQLi, 2 command, 1 code injection)
+./tools/campaign.ps1 -Org $org -Plan -Rule js/sql-injection,js/command-line-injection,js/code-injection -Property tier=1 -WeeklyCapacity 2
 
-# 4. Pre-create a "history" campaign a few days early so the tracking view has data (e.g. rate limiting)
-./tools/campaign.ps1 -Org $org -Create -Name 'Missing rate limiting (CWE-770)' `
-  -Description 'Add rate limiting or document the gateway control. Guide: <link>' `
-  -Rule js/missing-rate-limiting -EndsAt (Get-Date).AddDays(21) -Manager <your-login> -ContactLink <discussion-url>
+# 4. Pre-create a "history" campaign a few days early so the tracking view has data:
+#    XSS theme = 5 alerts (reflected XSS in products/orders/reviews/account + xss-through-exception in orders)
+./tools/campaign.ps1 -Org $org -Create -Name 'Cross-site scripting (CWE-79)' `
+  -Description 'Encode user input for the HTML context (_.escape) and never send err.stack. Guide: .github/instructions/demo-app-security.instructions.md' `
+  -Rule js/reflected-xss,js/xss-through-exception -EndsAt (Get-Date).AddDays(21) -Manager <your-login> -ContactLink <discussion-url>
+#    Then fix one XSS alert (merge a Session 2 Autofix PR) so the campaign shows progress.
+
+# 5. Secret campaign (public preview, UI only): after the "ACME API key" custom pattern back-fills, there are
+#    3 live keys (config/settings.js, config/partners.js, scripts/backfill.js) + 1 test key.
 ```
 
 **Browser tabs to pre-open** (zoom 125%):
@@ -50,11 +55,11 @@ gh workflow run codeql.yml -R "$org/ghas-training"
    ```text
    is:open tool:CodeQL props.tier:1
    ```
-   then narrow to injection rules (or start from a **template**, e.g. *Cross-site scripting (CWE-79)*). Add `autofix:supported` and point out the count change.
+   then narrow to injection rules: `rule:js/sql-injection,js/command-line-injection,js/code-injection` → **7 alerts** across 5 files owned by different fictional teams (catalog, checkout, platform, admin). Point out what's deliberately **left out**: the 12+ `js/missing-rate-limiting` alerts (noise → tune centrally, Session 1). Add `autofix:supported` and point out the count.
 2. Click **Create campaign** (from the filtered view or template). Fill in:
    - **Name:** `Injection in tier-1 apps`
    - **Short description:** objective + why + guidance:
-     *"Remove SQL and command injection and reflected XSS from tier-1 internet-facing apps. Target: ≥ 90 % fixed (not dismissed), 0 open critical. Use parameterised queries / execFile — see .github/instructions/demo-app-security.instructions.md."*
+     *"Remove SQL, command and code injection from tier-1 internet-facing apps. Target: ≥ 90 % fixed (not dismissed), 0 open critical. Use parameterised queries / execFile / no eval — see .github/instructions/demo-app-security.instructions.md."*
    - **Due date:** from `campaign.ps1 -Plan -WeeklyCapacity` output (setup step 3) — *"capacity, not wishful thinking"*.
    - **Manager:** yourself / AppSec team · **Contact link:** the Discussion.
    - **Generate issues:** on.
@@ -65,7 +70,7 @@ gh workflow run codeql.yml -R "$org/ghas-training"
 
 1. Switch to repo **Security → Campaigns** → the new campaign: alerts, due date, manager, contact.
 2. Open the auto-created **tracking issue** in the repo — description, contact link and due date are synced.
-3. On the SQL injection alert in the campaign: **Copilot Autofix** is already suggested → mention *Create PR with fix* (Session 2). If agentic autofix is enabled: select the injection alerts → **Assign to Copilot** (≤ 25 per session → one draft PR).
+3. On the SQL injection alert in `orders.js` in the campaign: **Copilot Autofix** is already suggested → mention *Create PR with fix* (Session 2). If agentic autofix is enabled: select the 3 SQLi alerts in `orders.js` / `reviews.js` → **Assign to Copilot** (≤ 25 per session → one draft PR).
 4. Create a branch/PR from one alert → it moves to **In progress**.
 
 ## Segment 4 — Monitor progress & outcomes (2 min)
