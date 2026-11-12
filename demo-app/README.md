@@ -1,8 +1,8 @@
 # ACME Shop demo app — ⚠️ intentionally vulnerable
 
 A tiny Express + SQLite API seeded with a **realistic mix** of true positives, false positives,
-test-only findings, risk-accepted findings and vulnerable dependencies for the GHAS triage session
-([`../session`](../session)). **Do not deploy.** All secrets are fake.
+test-only findings, risk-accepted findings and vulnerable dependencies, shared by all three training sessions
+([`../sessions`](../sessions)): triage (1), Copilot remediation (2) and security campaigns (3). **Do not deploy.** All secrets are fake.
 
 The app is designed to be **scanned**, not run. (Running is optional: `npm install && npm start` — the pinned
 `sqlite3@5.0.0` may need native build tools on newer Node versions.)

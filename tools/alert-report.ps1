@@ -3,7 +3,7 @@
   Prioritised view of open GHAS alerts plus an audit of dismissed/closed alerts.
 .DESCRIPTION
   Pulls code scanning, Dependabot and secret scanning alerts via the GitHub REST API,
-  assigns a starting priority (P0-P3) using the rules in session/03-triage-playbook.md,
+  assigns a starting priority (P0-P3) using the rules in sessions/01-alert-triage/03-triage-playbook.md,
   and flags dismissals that need review (weak justification, stale, or contradictory).
   The priority is a starting point - humans adjust it for exposure and business context.
 .EXAMPLE

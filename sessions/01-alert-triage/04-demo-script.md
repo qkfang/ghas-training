@@ -1,6 +1,6 @@
 # Hands-on demo script (10 minutes)
 
-Repository: `qkfang/ghas-training` · App: [`demo-app/`](../demo-app) · Tools: [`tools/`](../tools)
+Repository: `qkfang/ghas-training` · App: [`demo-app/`](../../demo-app) · Tools: [`tools/`](../../tools)
 
 ## Setup (do the day before — ~20 min)
 
@@ -21,7 +21,7 @@ gh run watch -R qkfang/ghas-training
 ./tools/seed-dismissals.ps1
 ```
 
-Expected alerts are listed in [`demo-app/README.md`](../demo-app/README.md). If an expected CodeQL alert does not appear
+Expected alerts are listed in [`demo-app/README.md`](../../demo-app/README.md). If an expected CodeQL alert does not appear
 (query behaviour changes between CodeQL releases), adapt the talking point — the triage logic is the lesson.
 
 **Browser tabs to pre-open** (zoom 125%):

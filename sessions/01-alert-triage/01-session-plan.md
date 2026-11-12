@@ -1,4 +1,4 @@
-# Session plan — Prioritising, investigating & managing GHAS alerts
+# Session 1 plan — Prioritising, investigating & managing GHAS alerts
 
 | | |
 |---|---|
@@ -6,7 +6,7 @@
 | **Audience** | Developers, tech leads, AppSec champions, security engineers |
 | **Outcome** | Attendees understand how GHAS alerts should be **assessed** (prioritised & investigated) and **managed** (fixed, tuned, dismissed, audited) — including false positives and dismissed findings. |
 | **Prereqs** | Basic familiarity with GitHub repos/PRs. No GHAS admin rights needed to follow. |
-| **Materials** | [`02-slides.md`](02-slides.md) (Marp) · [`03-triage-playbook.md`](03-triage-playbook.md) (handout) · [`04-demo-script.md`](04-demo-script.md) · [`05-hands-on-exercise.md`](05-hands-on-exercise.md) · [`../demo-app`](../demo-app) · [`../tools`](../tools) |
+| **Materials** | [`02-slides.md`](02-slides.md) (Marp) · [`03-triage-playbook.md`](03-triage-playbook.md) (handout) · [`04-demo-script.md`](04-demo-script.md) · [`05-hands-on-exercise.md`](05-hands-on-exercise.md) · [`../demo-app`](../../demo-app) · [`../tools`](../../tools) |
 
 ## Learning objectives
 
@@ -81,6 +81,7 @@ By the end, attendees can:
 - Security overview: filter by severity, team, property; track **MTTR**, **% fixed vs dismissed**, **dismissal rate by reason**, **SLA breach count**, **PR-introduced vs fixed in PR**.
 - Security campaigns for backlog themes (e.g., "all SQLi in tier-1 apps") with Copilot Autofix and due dates.
 - Assign code scanning alerts to Copilot (agentic autofix) for backlog fixes where enabled — still reviewed by humans.
+- Keep this brief — Copilot remediation is covered in depth in [Session 2](../02-copilot-remediation/01-session-plan.md) and campaigns in [Session 3](../03-security-campaigns/01-session-plan.md).
 
 ### 7. Demo (10 min) — see [`04-demo-script.md`](04-demo-script.md)
 
@@ -90,7 +91,7 @@ By the end, attendees can:
 
 ## Pre-session checklist (T-1 day)
 - [ ] Run `tools/enable-ghas.ps1`, create the **ACME API key** custom pattern, run the CodeQL workflow.
-- [ ] Confirm alerts exist (see expected list in [`../demo-app/README.md`](../demo-app/README.md)).
+- [ ] Confirm alerts exist (see expected list in [`../demo-app/README.md`](../../demo-app/README.md)).
 - [ ] Run `tools/seed-dismissals.ps1` to stage good/bad dismissals for the audit demo.
 - [ ] Take **screenshots** of each demo step as a fallback (network/UI changes).
 - [ ] Open browser tabs listed in the demo script; zoom 125%+.

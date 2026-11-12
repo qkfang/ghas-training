@@ -7,7 +7,7 @@ title: Prioritising, investigating & managing GHAS alerts
 
 <!-- _class: lead -->
 # Prioritising, Investigating & Managing GHAS Alerts
-### Including false positives and dismissed findings
+### Session 1 · Including false positives and dismissed findings
 
 45 min · 35 min talk + 10 min hands-on demo
 
@@ -276,4 +276,6 @@ Is it a one-off FP / N/A / accepted risk?
 3. **Fix → Tune → Dismiss** — and pick the *true* reason
 4. **Every dismissal has an owner and an expiry** — audit and reopen
 
-📄 Handout: `session/03-triage-playbook.md` · 🧪 Practice: `demo-app/` + `tools/`
+📄 Handout: `sessions/01-alert-triage/03-triage-playbook.md` · 🧪 Practice: `demo-app/` + `tools/`
+
+➡️ Next: **Session 2** — remediating with GitHub Copilot · **Session 3** — security campaigns
