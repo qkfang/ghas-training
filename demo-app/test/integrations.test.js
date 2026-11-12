@@ -5,10 +5,10 @@ const express = require('express');
 const http = require('node:http');
 
 test('backup validates names and passes tar arguments without a shell', async () => {
-  let invocation;
+  const invocations = [];
   const originalExecFile = childProcess.execFile;
   childProcess.execFile = (command, args, callback) => {
-    invocation = { command, args };
+    invocations.push({ command, args });
     callback(null);
   };
   delete require.cache[require.resolve('../src/routes/integrations')];
@@ -26,11 +26,15 @@ test('backup validates names and passes tar arguments without a shell', async ()
       method: 'POST'
     });
     assert.equal(unsafeResponse.status, 400);
-    assert.equal(invocation, undefined);
 
-    const safeResponse = await fetch(`${url}?name=nightly_backup`, { method: 'POST' });
-    assert.equal(safeResponse.status, 202);
-    assert.deepEqual(invocation, {
+    for (let i = 0; i < 3; i += 1) {
+      const safeResponse = await fetch(`${url}?name=nightly_backup`, { method: 'POST' });
+      assert.equal(safeResponse.status, 202);
+    }
+    const limitedResponse = await fetch(`${url}?name=nightly_backup`, { method: 'POST' });
+    assert.equal(limitedResponse.status, 429);
+    assert.equal(invocations.length, 3);
+    assert.deepEqual(invocations[0], {
       command: 'tar',
       args: ['-czf', '/tmp/nightly_backup.tgz', './data']
     });
