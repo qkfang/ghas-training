@@ -1,7 +1,10 @@
-const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// DEMO ALERT (true positive): hard-coded signing key in production code.
-const JWT_SECRET = 'acme-super-secret-signing-key-2024';
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
+const jwt = require('jsonwebtoken');
 
 function login(req, res) {
   const { username } = req.body || {};
